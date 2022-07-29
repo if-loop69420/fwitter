@@ -9,6 +9,7 @@ defmodule Fwitter.AuthAccs.AuthUser do
     field :confirmed_at, :naive_datetime
 
     timestamps()
+    has_one :users, Fwitter.Accounts.User, foreign_key: :id
   end
 
   @doc """

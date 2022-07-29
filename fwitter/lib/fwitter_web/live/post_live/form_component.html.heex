@@ -13,10 +13,6 @@
     <%= text_input f, :body %>
     <%= error_tag f, :body %>
   
-    <%= label f, :likes %>
-    <%= number_input f, :likes %>
-    <%= error_tag f, :likes %>
-  
     <div>
       <%= submit "Save", phx_disable_with: "Saving..." %>
     </div>

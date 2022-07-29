@@ -4,9 +4,11 @@ defmodule Fwitter.Dashboard.Post do
 
   schema "posts" do
     field :body, :string
-    field :likes, :integer
+    field :likes, :integer, default: 0
 
     timestamps()
+
+    belongs_to :users, Fwitter.Accounts.User, foreign_key: :user_id
   end
 
   @doc false

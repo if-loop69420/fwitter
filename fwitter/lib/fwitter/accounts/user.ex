@@ -3,10 +3,12 @@ defmodule Fwitter.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
-    field :followers, :integer
+    field :followers, :integer, default: 0
     field :username, :string
 
     timestamps()
+    has_many :posts, Fwitter.Dashboard.Post  
+    has_one :auth_users, Fwitter.AuthAccs.AuthUser, foreign_key: :id
   end
 
   @doc false
