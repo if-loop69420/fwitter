@@ -1,6 +1,8 @@
 defmodule FwitterWeb.Router do
   use FwitterWeb, :router
 
+  import FwitterWeb.AuthUserAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,6 +10,7 @@ defmodule FwitterWeb.Router do
     plug :put_root_layout, {FwitterWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_auth_user
   end
 
   pipeline :api do
@@ -52,5 +55,38 @@ defmodule FwitterWeb.Router do
 
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+  end
+
+  ## Authentication routes
+
+  scope "/", FwitterWeb do
+    pipe_through [:browser, :redirect_if_auth_user_is_authenticated]
+
+    get "/auth_users/register", AuthUserRegistrationController, :new
+    post "/auth_users/register", AuthUserRegistrationController, :create
+    get "/auth_users/log_in", AuthUserSessionController, :new
+    post "/auth_users/log_in", AuthUserSessionController, :create
+    get "/auth_users/reset_password", AuthUserResetPasswordController, :new
+    post "/auth_users/reset_password", AuthUserResetPasswordController, :create
+    get "/auth_users/reset_password/:token", AuthUserResetPasswordController, :edit
+    put "/auth_users/reset_password/:token", AuthUserResetPasswordController, :update
+  end
+
+  scope "/", FwitterWeb do
+    pipe_through [:browser, :require_authenticated_auth_user]
+
+    get "/auth_users/settings", AuthUserSettingsController, :edit
+    put "/auth_users/settings", AuthUserSettingsController, :update
+    get "/auth_users/settings/confirm_email/:token", AuthUserSettingsController, :confirm_email
+  end
+
+  scope "/", FwitterWeb do
+    pipe_through [:browser]
+
+    delete "/auth_users/log_out", AuthUserSessionController, :delete
+    get "/auth_users/confirm", AuthUserConfirmationController, :new
+    post "/auth_users/confirm", AuthUserConfirmationController, :create
+    get "/auth_users/confirm/:token", AuthUserConfirmationController, :edit
+    post "/auth_users/confirm/:token", AuthUserConfirmationController, :update
   end
 end
