@@ -74,10 +74,22 @@ defmodule FwitterWeb.Router do
 
   scope "/", FwitterWeb do
     pipe_through [:browser, :require_authenticated_auth_user]
-
     get "/auth_users/settings", AuthUserSettingsController, :edit
     put "/auth_users/settings", AuthUserSettingsController, :update
     get "/auth_users/settings/confirm_email/:token", AuthUserSettingsController, :confirm_email
+    live "/posts", PostLive.Index, :index
+    live "/posts/new", PostLive.Index, :new
+    live "/posts/:id/edit", PostLive.Index, :edit
+
+    live "/posts/:id", PostLive.Show, :show
+    live "/posts/:id/show/edit", PostLive.Show, :edit
+
+    live "/users", UserLive.Index, :index
+    #live "/users/new", UserLive.Index, :new
+    live "/users/:id/edit", UserLive.Index, :edit
+
+    live "/users/:id", UserLive.Show, :show
+    live "/users/:id/show/edit", UserLive.Show, :edit
   end
 
   scope "/", FwitterWeb do
